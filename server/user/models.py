@@ -36,4 +36,19 @@ class User:
             return jsonify(response),200
 
         return jsonify({"Error":"Signup Failed"}), 400
+    def login(self):
+        user_data = request.get_json()
+        if not user_data or 'email' not in user_data or 'password' not in user_data:
+            return jsonify({"error": "Incomplete data"}), 400
 
+        user = db.users.find_one({'email': user_data['email']})
+        if user:
+            if bcrypt.check_password_hash(user["password"], user_data["password"]):
+                token = create_access_token(identity=str(user['_id']))  # Convert ObjectId to string
+                response = {
+                    "email": user["email"],
+                    "token": token
+                }
+                return jsonify(response), 200
+
+        return jsonify({"Error": "Invalid email or password"}), 401
