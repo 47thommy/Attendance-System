@@ -44,7 +44,7 @@ class User:
         user = db.users.find_one({'email': user_data['email']})
         if user:
             if bcrypt.check_password_hash(user["password"], user_data["password"]):
-                token = create_access_token(identity=str(user['_id']))  # Convert ObjectId to string
+                token = create_access_token(identity=str(user['_id'])) 
                 response = {
                     "email": user["email"],
                     "token": token
